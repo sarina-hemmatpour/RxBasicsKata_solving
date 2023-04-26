@@ -1,5 +1,10 @@
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleEmitter;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.core.SingleOnSubscribe;
+import io.reactivex.rxjava3.internal.operators.single.SingleMap;
 
 import java.util.List;
 import java.util.Map;
@@ -9,35 +14,62 @@ class CountriesServiceSolved implements CountriesService {
 
     @Override
     public Single<String> countryNameInCapitals(Country country) {
-        return null; // put your solution here
+        return Single.create(emitter -> {
+            emitter.onSuccess(country.name.toUpperCase());
+        });
+        // put your solution here
     }
 
     public Single<Integer> countCountries(List<Country> countries) {
-        return null; // put your solution here
+        return Single.just(countries.size());
+
     }
 
     public Observable<Long> listPopulationOfEachCountry(List<Country> countries) {
-        return null; // put your solution here;
+        Long[] populations=new Long[countries.size()];
+        for (int i = 0; i < countries.size(); i++) {
+            populations[i]=countries.get(i).population;
+        }
+        return Observable.fromArray(populations);
     }
 
     @Override
     public Observable<String> listNameOfEachCountry(List<Country> countries) {
-        return null; // put your solution here
+        String[] names=new String[countries.size()];
+        for (int i = 0; i < countries.size(); i++) {
+            names[i]=countries.get(i).name;
+        }
+        return Observable.fromArray(names);
     }
 
     @Override
     public Observable<Country> listOnly3rdAnd4thCountry(List<Country> countries) {
-        return null; // put your solution here
+        return Observable.just(countries.get(2) , countries.get(3));
     }
 
     @Override
     public Single<Boolean> isAllCountriesPopulationMoreThanOneMillion(List<Country> countries) {
-        return null; // put your solution here
+        return Single.create(emitter -> {
+            boolean flag=true;
+            for (int i = 0; i < countries.size(); i++) {
+                if (countries.get(i).population<=1000000){
+                    flag=false;
+                    break;
+                }
+            }
+            emitter.onSuccess(flag);
+        });
     }
 
     @Override
     public Observable<Country> listPopulationMoreThanOneMillion(List<Country> countries) {
-        return null; // put your solution here
+        return Observable.create(emitter -> {
+            for (int i = 0; i < countries.size(); i++) {
+                if (countries.get(i).population>1000000){
+                    emitter.onNext(countries.get(i));
+                }
+            }
+        });
     }
 
     @Override
@@ -52,7 +84,13 @@ class CountriesServiceSolved implements CountriesService {
 
     @Override
     public Observable<Long> sumPopulationOfCountries(List<Country> countries) {
-        return null; // put your solution here
+        return Observable.create(emitter -> {
+            long sum=0L;
+            for (int i = 0; i < countries.size(); i++) {
+                sum+=countries.get(i).population;
+            }
+            emitter.onNext(sum);
+        });
     }
 
     @Override
